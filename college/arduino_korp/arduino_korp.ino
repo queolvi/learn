@@ -1,7 +1,9 @@
 #include "Arduino.h"
+#include "ezBuzzer.h"
 
 class user {};
 class game {};
+
 int TopTime[3]{0, 0, 0};
 int res_counts = 0;
 int level = 0;
@@ -12,6 +14,8 @@ blue_LED = 0, green_LED = 0, orange_LED = 0;
 const int buttonPin_first = 0, buttonPin_second = 0,
 buttonPin_third = 0, buttonPin_fourth = 0,
 buttonPin_fifth = 0;
+ezBuzzer piezo(0);
+
 
 void game_launch();
 void set_level();
@@ -35,7 +39,7 @@ void game_launch() {
   set_level();
 
   
-  //sound_reaction(); 
+  sound_reaction(); 
   light_up_LED();
   
 
@@ -125,9 +129,10 @@ void light_up_LED() {
 }
 
 void sound_reaction() {
-  ezBuzzer piezo{6}; // need set a value on parameter
+  int ms = milliseconds;
   piezo.stop();
-  piezo.beep(milliseconds, delay(milliseconds));
+  piezo.beep(ms);
+  delay(ms);
   piezo.stop();
 }
 

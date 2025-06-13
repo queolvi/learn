@@ -3,43 +3,39 @@
 namespace {
 
 };
-ezBuzzer piezo(0);
 
 class reaction_Game {
   public:
   
-  #ifdef need_work
-  ezBuzzer piezo(0);
-  #endif
 
   private:
   int TopTime[3]{0, 0, 0};
-  int res_counts = 0;
-  int level = 0;
   int milliseconds = 0;
-  #ifdef idk what incapsulation must be with LEDS
+  int level = 1;
+  int delayTimes[3] = {400, 300, 250};
+  const int buttonPins[5];
+  const int ledPins[5];
+  ezBuzzer piezo;
+
+
   
-  #endif
+
+
 
   public:
-  const int buttonPin_first = 0, buttonPin_second = 0,
-  buttonPin_third = 0, buttonPin_fourth = 0,
-  buttonPin_fifth = 0;
-
-  const int yellow_LED = 0, red_LED = 0,
-  blue_LED = 0, green_LED = 0, orange_LED = 0;
-  public:
+  reaction_Game(int yellow_LED_, int red_LED_, int blue_LED_, int green_LED_, int orange_LED_)
+  : yellow_LED(yellow_LED_), red_LED(red_LED_), blue_LED(blue_LED_), green_LED(green_LED_), orange_LED(orange_LED_) {};
   void low_level(); 
   void medium_level();
   void hard_level();
   void set_level();
   void game_launch();
   
-  const int get_yellow_LED(const int& yellow_LED) const;
-  const int get_red_LED(const int& red_LED) const;
-  const int get_blue_LED(const int& blue_LED) const;
-  const int get_green_LED(const int& green_LED) const;
-  const int get_orange_LED(const int& orange_LED) const;
+  int get_yellow_LED(const int& yellow_LED) const;
+  int get_red_LED(const int& red_LED) const;
+  int get_blue_LED(const int& blue_LED) const;
+  int get_green_LED(const int& green_LED) const;
+  int get_orange_LED(const int& orange_LED) const;
 
   public:
   virtual ~reaction_Game(){};
@@ -67,21 +63,63 @@ void reaction_Game::hard_level() { level = 3; milliseconds = 250; }
 void reaction_Game::set_level() {
   Serial.println("Enter game level (1 - low, 2 - medium, 3 - hard || yellow - 1, red - 2, blue - 3) ");
 
+  for(int i = 0; i < 3; ++i) {
   digitalWrite(get_yellow_LED(), HIGH);
-  digitalWrite(get_yellow_LED(), HIGH);
+  delay(milliseconds);
+  
+  digitalWrite(get_red_LED(), HIGH);
+  delay(milliseconds);
+  
   digitalWrite(get_blue_LED(), HIGH);
-
+  delay(milliseconds);
+  
   digitalWrite(get_yellow_LED(), LOW);
-  digitalWrite(get_yellow_LED(), LOW);
+  delay(milliseconds);
+  
+  digitalWrite(get_red_LED(), LOW);
+  delay(milliseconds);
+  
   digitalWrite(get_blue_LED(), LOW);
-
-  if (digitalRead(buttonPin_first)) { low_level(); } 
-  else if (digitalRead(buttonPin_second)) { medium_level(); }
-  else if (digitalRead(buttonPin_third)) { hard_level(); } 
-  else {
-    Serial.println("Invalid input! ");
+  delay(milliseconds);
   }
 
+
+  unsigned long start_time = milliseconds();
+  while(true) {
+    if(Serial.available()) {
+      int input = Serial.parseInt();
+      if(input >= 1 && input <= 3) {
+        switch(input) {
+          case 1 : low_level(); return;
+          case 2 : medium_level(); return;
+          case 3 : hard_level(); return;
+        }
+      }
+    }
+
+    
+    if(digitalRead(buttonPin_first)) {
+      delay(milliseconds);
+      low_level();
+      return;
+    }
+    else if (digitalRead(buttonPin_second)) {
+      delay(milliseconds);
+      medium_level();
+      return;
+    }
+    else if(digitalRead(buttonPin_third)) {
+      delay(milliseconds);
+      hard_level();
+      return;
+    }
+
+    if(milliseconds - startTime > 10000) {
+      Serial.println("Timeout, default choice - 1");
+      low_level();
+      return 0;
+    }
+  }
 }
 // end
 
@@ -97,8 +135,7 @@ void reaction_Game::game_launch() {
 };
 
 void reaction_Game::light_up_LED() {
-   int random_launch[5]{0, 0, 0, 0, 0};
-   int 
+   int random_launch[5]{0, 0, 0, 0, 0}; 
    int button_enter[5] { buttonPin_first, buttonPin_second, buttonPin_third, buttonPin_fourth, buttonPin_fifth };
    
   for(int i = 1; i < 2; i++) {
@@ -186,7 +223,7 @@ int array_buttons[5]{buttonPin_first, buttonPin_second,
                     buttonPin_third, buttonPin_fourth,
                     buttonPin_fifth};
 for (int i = 0; i < 4; ++i) {
-  digitalWrite(array_buttons[i], INPUT);
+  pinMode(array_buttons[i], INPUT);
 }
 
 }

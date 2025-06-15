@@ -1,253 +1,148 @@
 #include "Arduino.h"
 #include "ezBuzzer.h"
-namespace {
+#include "EEPROM.h"
 
-};
-
-class reaction_Game {
-  public:
-  
-
+class ReactionGame {
   private:
-  int TopTime[3]{0, 0, 0};
-  int milliseconds = 0;
-  int level = 1;
-  int delayTimes[3] = {400, 300, 250};
-  const int buttonPins[5];
-  const int ledPins[5];
-  ezBuzzer piezo;
+    const int buttonPins[5];
+    const int ledPins[5];
 
+    int topTimes[3] = {0, 0, 0};
+    int reactionTime = 0;
+    int level = 1;
+    int delayMs[3] = {400, 300, 250};
+    int result_counts = 0;
+    ezBuzzer piezo;
 
-  
-
-
+    void light_up_LEDS(int times) {
+      for(int i = 0; i < times; i++) {
+        for(int j = 0; j < 5; j++) {
+          digitalWrite(ledPins[j], HIGH);
+        }
+        delay(200);
+        for(int j = 0; j < 5; j++) {
+          digitalWrite(ledPins[j], LOW);
+        }
+        delay(200);
+      }
+    }
+    
+    void saveTopTimes() {
+      for(int i = 0; i < 3; i++) {
+        EEPROM.put(i * sizeof(int), topTimes[i]);
+      }
+    }
+    
+    void loadTopTimes() {
+      for(int i = 0; i < 3; i++) {
+        EEPROM.get(i * sizeof(int), topTimes[i]);
+      }
+    }
+    
+    int get_random_LED() { 
+      return random(0, 5); 
+    }
+    
+    bool check_button_press(int ledIndex) {
+      unsigned long start_Time = millis();
+      while(millis() - start_Time < delayMs[level - 1]) {
+        if (digitalRead(buttonPins[ledIndex])) {
+          reactionTime = millis() - start_Time;
+          return true;
+        }
+      }
+      return false;
+    }
 
   public:
-  reaction_Game(int yellow_LED_, int red_LED_, int blue_LED_, int green_LED_, int orange_LED_)
-  : yellow_LED(yellow_LED_), red_LED(red_LED_), blue_LED(blue_LED_), green_LED(green_LED_), orange_LED(orange_LED_) {};
-  void low_level(); 
-  void medium_level();
-  void hard_level();
-  void set_level();
-  void game_launch();
-  
-  int get_yellow_LED(const int& yellow_LED) const;
-  int get_red_LED(const int& red_LED) const;
-  int get_blue_LED(const int& blue_LED) const;
-  int get_green_LED(const int& green_LED) const;
-  int get_orange_LED(const int& orange_LED) const;
+    ReactionGame(int* buttons, int* leds, int buzzerPin) :
+      buttonPins{buttons[0], buttons[1], buttons[2], buttons[3], buttons[4]},
+      ledPins{leds[0], leds[1], leds[2], leds[3], leds[4]},
+      piezo(buzzerPin) {}
 
-  public:
-  virtual ~reaction_Game(){};
+    void launch_game() {
+      for(int i = 0; i < 5; i++) {
+        pinMode(ledPins[i], OUTPUT);
+        pinMode(buttonPins[i], INPUT);
+      }
+      loadTopTimes();
+    }
+    
+    void setLevel(int newLevel) {
+      if(newLevel >= 1 && newLevel <= 3) {
+        level = newLevel;
+        Serial.print("Level set to: ");
+        Serial.println(level);
+      }
+    }
+    
+    void start_round() {
+      int ledInx = get_random_LED();
+      digitalWrite(ledPins[ledInx], HIGH);
+      unsigned long startTime = millis();
+      
+      if(check_button_press(ledInx)) {
+        digitalWrite(ledPins[ledInx], LOW);
+        piezo.beep(100);
 
-
-  private:
-  void light_up_LED();
-  void sound_reaction();
-  void light_up_LEDS();
-  void press_buttons();
-
-};
-
-//public
-const int reaction_Game::get_yellow_LED( const int& yellow_LED) const { return *this; }
-const int reaction_Game::get_red_LED( const int& red_LED) const { return *this; }
-const int reaction_Game::get_blue_LED( const int& blue_LED) const { return *this; }
-const int reaction_Game::get_green_LED(const int& green_LED) const { return *this; }
-const int reaction_Game::get_orange_LED( const int& orange_LED) const { return *this; }
-
-void reaction_Game::low_level() {level = 1; milliseconds = 400; }
-void reaction_Game::medium_level() {level = 2; milliseconds = 300; }
-void reaction_Game::hard_level() { level = 3; milliseconds = 250; }
-
-void reaction_Game::set_level() {
-  Serial.println("Enter game level (1 - low, 2 - medium, 3 - hard || yellow - 1, red - 2, blue - 3) ");
-
-  for(int i = 0; i < 3; ++i) {
-  digitalWrite(get_yellow_LED(), HIGH);
-  delay(milliseconds);
-  
-  digitalWrite(get_red_LED(), HIGH);
-  delay(milliseconds);
-  
-  digitalWrite(get_blue_LED(), HIGH);
-  delay(milliseconds);
-  
-  digitalWrite(get_yellow_LED(), LOW);
-  delay(milliseconds);
-  
-  digitalWrite(get_red_LED(), LOW);
-  delay(milliseconds);
-  
-  digitalWrite(get_blue_LED(), LOW);
-  delay(milliseconds);
-  }
-
-
-  unsigned long start_time = milliseconds();
-  while(true) {
-    if(Serial.available()) {
-      int input = Serial.parseInt();
-      if(input >= 1 && input <= 3) {
-        switch(input) {
-          case 1 : low_level(); return;
-          case 2 : medium_level(); return;
-          case 3 : hard_level(); return;
+        if(result_counts < 3 || reactionTime < topTimes[2]) {
+          if(result_counts < 3) {
+            topTimes[result_counts] = reactionTime;
+            result_counts++;
+          } else {
+            topTimes[2] = reactionTime;
+          }
+          
+          for(int i = 1; i < result_counts; i++) {
+            if(topTimes[i] < topTimes[i - 1]) {
+              int temp = topTimes[i - 1];
+              topTimes[i - 1] = topTimes[i];  
+              topTimes[i] = temp;
+            }
+          }
+          saveTopTimes();
+        }
+        
+        Serial.print("Reaction time: ");
+        Serial.print(reactionTime);
+        Serial.println(" ms");
+      } else {
+        digitalWrite(ledPins[ledInx], LOW);
+        light_up_LEDS(3);
+        Serial.println("Too slow!");
+      }
+    }
+    
+    void showTopTimes() {
+      Serial.println("Top results: ");
+      for(int i = 0; i < 3; i++) {
+        if(topTimes[i] > 0) {
+          Serial.print(i + 1);
+          Serial.print(": ");
+          Serial.print(topTimes[i]);
+          Serial.println(" ms");
         }
       }
     }
-
-    
-    if(digitalRead(buttonPin_first)) {
-      delay(milliseconds);
-      low_level();
-      return;
-    }
-    else if (digitalRead(buttonPin_second)) {
-      delay(milliseconds);
-      medium_level();
-      return;
-    }
-    else if(digitalRead(buttonPin_third)) {
-      delay(milliseconds);
-      hard_level();
-      return;
-    }
-
-    if(milliseconds - startTime > 10000) {
-      Serial.println("Timeout, default choice - 1");
-      low_level();
-      return 0;
-    }
-  }
-}
-// end
-
-//private
-
-void reaction_Game::game_launch() {  
-  Serial.println("Enter level for game: (1 - low; 2 - medium; 3 - hard) \n");
-  while(!Serial.available());
-  set_level();
-
-  sound_reaction(); 
-  light_up_LED();
 };
 
-void reaction_Game::light_up_LED() {
-   int random_launch[5]{0, 0, 0, 0, 0}; 
-   int button_enter[5] { buttonPin_first, buttonPin_second, buttonPin_third, buttonPin_fourth, buttonPin_fifth };
-   
-  for(int i = 1; i < 2; i++) {
-    long randRes = random(5);
-    random_launch[i] = randRes;
-    digitalWrite(random_launch[i], HIGH);
-    unsigned long startTime = millis();
-    delay(milliseconds);
-    digitalWrite(random_launch[i], LOW);
-    
-    for(int j = 0; j < 5; ++j) {
-      if(button_enter[j] == random_launch[i]){
-        unsigned long buttonPressTime = 0;
-        unsigned long waitStart = millis();
-        while(millis() - waitStart < milliseconds) {
-          
-          if(digitalRead(button_enter[j])) {
-            buttonPressTime = millis();
-            unsigned long reactionTime = buttonPressTime - startTime;
-            
-            if(res_counts < 3 || reactionTime < TopTime[2]) {
-              if(res_counts < 3) {
-                TopTime[res_counts] = reactionTime;
-                res_counts++;
-              } else {
-                TopTime[2] = reactionTime;
-              }
-              
-              for(int k = 1; k < res_counts; k++) {
-                if(TopTime[k] < TopTime[k-1]) {
-                  unsigned long temp = TopTime[k-1];
-                  TopTime[k-1] = TopTime[k];
-                  TopTime[k] = temp;
-                }
-              }
-              
-              Serial.println("Top result:");
-              for(int k = 0; k < res_counts && k < 3; k++) {
-                Serial.print(k+1);
-                Serial.print(": ");
-                Serial.print(TopTime[k]);
-                Serial.println(" ms");
-              }
-            }
-            
-            break;
-          }
-        }
-        
-        delay(milliseconds);
-      } 
-    }
-}
-
-}
-
-void reaction_Game::sound_reaction() {
-  int ms = milliseconds;
-  piezo.stop();
-  piezo.beep(ms);
-  delay(ms);
-  piezo.stop();
-}
-
-void reaction_Game::light_up_LEDS() {
-  
-  for(int i = 1; i <= 3; i++) {  
-  digitalWrite(get_yellow_LED(), HIGH);
-  digitalWrite(get_red_LED(), HIGH);
-  digitalWrite(get_blue_LED(), HIGH);
-  digitalWrite(get_green_LED(), HIGH);
-  digitalWrite(get_orange_LED(), HIGH);
-  
-  digitalWrite(get_yellow_LED(), LOW);
-  digitalWrite(get_red_LED(), LOW);
-  digitalWrite(get_blue_LED(), LOW);
-  digitalWrite(get_green_LED(), LOW);
-  digitalWrite(get_orange_LED(), LOW);
-  }
-
-}
-
-void reaction_Game::press_buttons() {
-int array_buttons[5]{buttonPin_first, buttonPin_second,
-                    buttonPin_third, buttonPin_fourth,
-                    buttonPin_fifth};
-for (int i = 0; i < 4; ++i) {
-  pinMode(array_buttons[i], INPUT);
-}
-
-}
-
+// Создаем экземпляр игры с конкретными пинами
+int buttons[] = {2, 3, 4, 5, 6};
+int leds[] = {7, 8, 9, 10, 11};
+ReactionGame game(buttons, leds, 12);
 
 void setup() {
-
+  Serial.begin(9600);
+  game.launch_game();
 }
 
 void loop() {
-  using::reaction_Game; 
-  reaction_Game Game{};
-  Game.game_launch();
-  
-  pinMode(get_yellow_LED(), OUTPUT);
-  pinMode(get_red_LED(), OUTPUT);
-  pinMode(get_blue_LED(), OUTPUT);
-  pinMode(get_green_LED(), OUTPUT);
-  pinMode(get_orange_LED(), OUTPUT);
-  
-  digitalWrite(get_yellow_LED(), LOW);
-  digitalWrite(get_red_LED(), LOW);  
-  digitalWrite(get_blue_LED(), LOW);
-  digitalWrite(get_green_LED(), LOW); 
-  digitalWrite(get_orange_LED(), LOW);
-  
+  Serial.println("Select level (1-3):");
+  while(!Serial.available());
+  int level = Serial.parseInt();
+  game.setLevel(level);
+
+  game.start_round();
+  game.showTopTimes();
+  delay(1000);
 }

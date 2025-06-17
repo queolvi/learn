@@ -147,3 +147,4 @@ void loop() {
 
 }
 // https://github.com/tsmith165/nvchad-ubuntu-installer
+// https://soltau.ru/index.php/arduino/item/373-kak-vypolnyat-parallelnye-zadachi-threads-v-programme-dlya-arduino

@@ -181,7 +181,7 @@ void ReactionGame::showTopTimes() {
 //  REACTION_GAME_CLASS_END_OF_IMPLEMENTATION
 ///////////////////////////////////////////////////////////////////////////////////
 
-#define example_code_myNmspace
+#ifndef example_code_myNmspace
 int leds[] = {7, 8, 9, 10, 11};
 ReactionGame game(2, leds, 12);
 #endif

@@ -1,3 +1,5 @@
+#include <ezBuzzer.h>
+
 #include "Arduino.h"
 #include "ezBuzzer.h"
 #include "EEPROM.h"

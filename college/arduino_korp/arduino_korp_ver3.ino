@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#inlcude "ezBuzzer.h"
+#include "ezBuzzer.h"
 #include "EEPROM.h"
 
 class reactionGame {

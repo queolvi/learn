@@ -1,3 +1,6 @@
 [submodule "projects/albion_tools/other_sources/api"]
 	path = projects/albion_tools/other_sources/api
 	url = https://github.com/OpenAlbion/api.git
+[submodule "projects/launcher_games/imgui"]
+	path = projects/launcher_games/imgui
+	url = https://github.com/ocornut/imgui.git

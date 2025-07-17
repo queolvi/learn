@@ -1,0 +1,3 @@
+[submodule "projects/albion_tools/other_sources/api"]
+	path = projects/albion_tools/other_sources/api
+	url = https://github.com/OpenAlbion/api.git

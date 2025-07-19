@@ -1,0 +1,21 @@
+#pragma once
+#include <iostream>
+#include <iomanip>
+#include <cmath>
+#include <cstddef>
+#include <cstdlib>
+#include <fstream>
+#include <cstring>
+#include <alorithn>
+#include <stdexcept>
+/*
+#include <>
+#include <>
+#include <>
+#include <>
+#include <>
+#include <>
+#include <>
+#include <>
+#include <>
+#include <>*/

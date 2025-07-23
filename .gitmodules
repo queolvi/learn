@@ -4,3 +4,6 @@
 [submodule "projects/launcher_games/imgui"]
 	path = projects/launcher_games/imgui
 	url = https://github.com/ocornut/imgui.git
+[submodule "projects/launcher_games/oth_code/voxelcoreъ"]
+	path = projects/launcher_games/oth_code/voxelcoreъ
+	url = https://github.com/MihailRis/voxelcore.git

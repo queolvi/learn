@@ -4,9 +4,12 @@
 [submodule "projects/launcher_games/imgui"]
 	path = projects/launcher_games/imgui
 	url = https://github.com/ocornut/imgui.git
-[submodule "projects/launcher_games/oth_code/voxelcoreъ"]
+[submodule "projects/launcher_games/oth_code/voxelcore"]
 	path = projects/launcher_games/oth_code/voxelcoreъ
 	url = https://github.com/MihailRis/voxelcore.git
 [submodule "projects/launcher_games/oth_code/LearnOpenGL"]
 	path = projects/launcher_games/oth_code/LearnOpenGL
 	url = https://github.com/JoeyDeVries/LearnOpenGL.git
+[submodule "projects/launcher_games/oth_code/voxelcore"]
+	url = https://github.com/username/voxelcore.git
+	path = projects/launcher_games/oth_code/voxelcore

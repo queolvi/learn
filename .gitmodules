@@ -7,3 +7,6 @@
 [submodule "projects/launcher_games/oth_code/voxelcoreъ"]
 	path = projects/launcher_games/oth_code/voxelcoreъ
 	url = https://github.com/MihailRis/voxelcore.git
+[submodule "projects/launcher_games/oth_code/LearnOpenGL"]
+	path = projects/launcher_games/oth_code/LearnOpenGL
+	url = https://github.com/JoeyDeVries/LearnOpenGL.git

@@ -13,3 +13,6 @@
 [submodule "projects/launcher_games/oth_code/voxelcore"]
 	url = https://github.com/username/voxelcore.git
 	path = projects/launcher_games/oth_code/voxelcore
+[submodule "projects/They-are-Gigabytes"]
+	path = projects/They-are-Gigabytes
+	url = https://github.com/Mishanya00/They-are-Gigabytes.git

@@ -16,3 +16,6 @@
 [submodule "projects/They-are-Gigabytes"]
 	path = projects/They-are-Gigabytes
 	url = https://github.com/Mishanya00/They-are-Gigabytes.git
+[submodule "projects/gcc"]
+	path = projects/gcc
+	url = https://gcc.gnu.org/git/gcc.git

@@ -1,56 +1,26 @@
-create database db_nl;
+USE db_nl;
 
-create table table_1(
-  int num primary key;
-  varchar(255) str;
-);  
+CREATE TABLE table_1 (
+    num INT PRIMARY KEY,
+    str VARCHAR(255)
+);
 
-create table table_2(
-  int num primary key;
-  varchar(255) str;
-);  
+CREATE TABLE table_2 LIKE table_1;
+CREATE TABLE table_3 LIKE table_1;
+CREATE TABLE table_4 LIKE table_1;
+CREATE TABLE table_5 LIKE table_1;
+INSERT INTO table_1 (num, str) VALUES 
+(0, 'ab'), (1, 'cd');
 
-create table table_3(
-  int num primary key;
-  varchar(255) str;
-);  
+INSERT INTO table_2 (num, str) VALUES 
+(2, 'ef'), (3, 'gh');
 
-create table table_4(
-  int num primary key;
-  varchar(255) str;
-);  
+INSERT INTO table_3 (num, str) VALUES 
+(4, 'ij'), (5, 'kl');
 
-create table table_5(
-  int num primary key;
-  varchar(255) str;
-);  
+INSERT INTO table_4 (num, str) VALUES 
+(6, 'mn'), (7, 'op');
 
-insert into table_1(num, str) values
-(0,'ab'),
-(1,'cd');
-insert into table_2(num, str) values
-(2,'ef'),
-(3,'gh');
-insert into table_3(num, str) values
-(4,'ij'),
-(5,'kl');
-insert into table_4(num, str) values
-(6,'mn'),
-(7,'op');
-insert into table_5(num, str) values
-(8,'qr'),
-(9,'st');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+INSERT INTO table_5 (num, str) VALUES 
+(8, 'qr'), (9, 'st');
+SELECT * FROM table_1;

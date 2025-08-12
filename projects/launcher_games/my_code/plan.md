@@ -1,4 +1,4 @@
-# Game Launcher Project Workflow
+Game Launcher Project Workflow
 ## 🔧 План исправлений (5 дней)
 
 ### День 1: Рефакторинг архитектуры

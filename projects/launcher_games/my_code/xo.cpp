@@ -24,7 +24,6 @@ void game() {
         int row, col;
         std::cout << "Player " << (currentPlayer + 1) << " (" << players[currentPlayer] << "), enter row (1-3) and column (1-3): ";
         std::cin >> row >> col;
-//gavnjo1        
         if (row < 1 || row > 3 || col < 1 || col > 3) { std::cout << "Invalid input! Try again.\n"; continue; }
         if (board[row-1][col-1] != ' ') { std::cout << "This cell is already occupied! Try again.\n";  continue; }
         

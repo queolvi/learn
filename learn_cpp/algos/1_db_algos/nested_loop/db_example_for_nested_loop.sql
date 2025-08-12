@@ -10,10 +10,10 @@ CREATE TABLE table_3 LIKE table_1;
 CREATE TABLE table_4 LIKE table_1;
 CREATE TABLE table_5 LIKE table_1;
 INSERT INTO table_1 (num, str) VALUES 
-(0, 'ab'), (1, 'cd');
+(0, 'ab'), (1, 'ab');
 
 INSERT INTO table_2 (num, str) VALUES 
-(2, 'ef'), (3, 'gh');
+(2, 'cd'), (3, 'cd');
 
 INSERT INTO table_3 (num, str) VALUES 
 (4, 'ij'), (5, 'kl');

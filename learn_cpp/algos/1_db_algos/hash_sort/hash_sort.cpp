@@ -32,8 +32,8 @@ public:
         conn = mysql_init(nullptr);
         if (!conn) throw std::runtime_error("MySQL initialization failed");
         
-        if (!mysql_real_connect(conn, "localhost", "ваш_логин", "ваш_пароль", 
-                              "company", 0, nullptr, 0)) {
+        if (!mysql_real_connect(conn, "localhost", "korp", "dima2007", 
+                              "hash_join_demo", 3306, nullptr, 0)) {
             std::string err = "Connection failed: ";
             err += mysql_error(conn);
             throw std::runtime_error(err);

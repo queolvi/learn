@@ -2,7 +2,6 @@
 #include <string>
 using namespace std;
 
-// Создайте собственный класс исключения для возраста
 class AgeException {
 private:
     string message;
@@ -22,8 +21,8 @@ void checkAge(int age) {
 int main() {
     try {
         checkAge(25);
-        checkAge(-5);  // Должно бросить исключение
-        checkAge(200); // Должно бросить исключение
+        checkAge(-5);
+        checkAge(200);
     } catch (const AgeException& e) {
         cout << e.what() << ": " << e.getInvalidAge() << endl;
     }

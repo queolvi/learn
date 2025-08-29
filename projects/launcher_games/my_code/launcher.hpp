@@ -6,6 +6,27 @@
 #include <deque>
 #include <cstdlib>
 #include <ctime>
+class GameBase {
+  protected:
+    GLFWindow* window;
+  public:
+    virtual ~GameBase() = default;
+    virtual void init() = 0;
+    virtual void update(double deltaTime) = 0;
+    virtual void render() = 0;
+    virtual void handleInput(int key, int action) = 0;
+};
+
+class GameManager{
+  private:
+    std::vector<std::unique_ptr<GameBase>> games;
+    int currentGameIndex;
+    GLFWindow* window;
+  public:
+    GameManager(GLFWindow* win) : window(win), currentGameIndex(-1) {
+
+    }
+};
 
 struct Snake_segment {
     glm::vec2 position;
@@ -51,8 +72,14 @@ public:
     
     void change_direction(glm::vec2 new_direction) {
         // Запрещаем движение в противоположном направлении
+      #ifdef old_chdir_definition
         if (new_direction != -direction) {
             direction = new_direction;
+        }
+      #endif
+
+        if (glm::length(new_direction + direction) > 1.0f) {
+          direction = new_direction;
         }
     }
     
@@ -160,6 +187,24 @@ protected:
         }
     }
 
+    static void mouse_button_callback(GLFWindow* window, int button, int action, int mods) {
+      if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        double xpos, ypos;
+        glfwGetCursorPos(window, &xpos, &ypos);
+
+        // realize coordinat from mouse to coordinat OpenGL
+        int width, height;
+        glfwGetWindowSize(window, &width, &height);
+        
+        float glX = (xpos / width) * 2.0f - 1.0f;
+        float glY = 1.0f - (ypos / height) * 2.0f;
+
+        GameBase * game = static_cast<GameBase*>(glfwGetWindowUserPointer(window));
+        if (game) {
+          game->handleMouseClick(glX, glY, button);
+        }
+      }
+    }
 public:
     Window() {
         initGLFW();
